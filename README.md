@@ -1,36 +1,162 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# eGarant API
 
-## Getting Started
+**eGarant API**, the backend service powering the [eGarant Mobile App](https://github.com/A-Cdeveloper/eGarant-MobileApp---frontend). This API is responsible for managing user accounts, invoices, sellers, and warranty-covered products. It is built with **Next.js 15**, **Prisma ORM**, and **MySQL**, and uses **JWT** for authentication and **Zod** for validation.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- ✅ User registration with OTP email confirmation
+- ✅ JWT-based authentication (login/logout)
+- ✅ User profile management (view/delete)
+- ✅ Invoice and product management
+- ✅ Automatic cascade deletion of invoices and products when a user is deleted
+- ✅ Email integration (OTP)
+- ✅ Server Actions with direct Prisma access
+
+## 🛠 Tech Stack
+
+- **Backend Framework**: Next.js 15)
+- **Database**: MySQL (via Prisma ORM)
+- **Auth**: JSON Web Tokens (`jose`)
+- **Validation**: Zod
+- **Email**: SMTP (via Nodemailer)
+
+---
+
+## 📦 Installation
+
+1.  **Clone the repository**:
+
+```
+git clone https://github.com/A-Cdeveloper/eGarant-MobileApp---API.git
+cd eGarant-MobileApp---API
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1.  **Install dependencies**:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Set up environment variables**:
 
-## Learn More
+Create a `.env` file and configure the following:
 
-To learn more about Next.js, take a look at the following resources:
+```
+DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
+JWT_SECRET="your-secret"
+EMAIL_USER="your@email.com"
+EMAIL_PASS="your-email-password"
+EMAIL_FROM="eGarant <your@email.com>"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1.  **Push Prisma schema & generate client**:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+npx prisma db push
+npx prisma generate
+```
 
-## Deploy on Vercel
+1.  **Run the development server**:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📬 API Documentation
+
+View the full Postman collection here:
+
+🔗 [https://documenter.getpostman.com/view/35019147/2sB2qaiggi](https://documenter.getpostman.com/view/35019147/2sB2qaiggi)
+
+### 🧾 Example Endpoints
+
+#### 1\. **Send OTP**
+
+```
+POST /api/auth/send-otp
+```
+
+Body:
+
+```
+{
+  "email": "example@example.com"
+}
+```
+
+#### 2\. **Verify OTP (Login or Register)**
+
+```
+POST /api/auth/verify-otp
+```
+
+Body:
+
+```
+{
+  "email": "example@example.com",
+  "otp": "123456"
+}
+```
+
+Returns a JWT token.
+
+#### 3\. **Delete User Profile**
+
+```
+DELETE /api/user/delete/:uid
+```
+
+Authorization: Bearer Token
+
+Automatically deletes user, invoices, and related products.
+
+---
+
+## 🔐 Authentication
+
+All protected routes require a `Bearer Token` (JWT) in the `Authorization` header:
+
+```
+Authorization: Bearer <your-token>
+```
+
+---
+
+## 📂 Project Structure
+
+```
+/app
+  └── api/
+        └── auth/       - OTP + login
+        └── user/       - User profile actions
+/lib
+  └── db.ts             - Prisma client
+  └── auth/             - JWT utilities
+/prisma
+  └── schema.prisma     - Database schema
+```
+
+---
+
+## 🧪 Testing
+
+To test locally, you can use the [Postman collection](https://documenter.getpostman.com/view/35019147/2sB2qaiggi) or `curl`.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
+
+---
+
+## 🙌 Contributing
+
+If you have suggestions or find a bug, feel free to open an issue or PR.
+
+---
+
+Made with ❤️ by [@A-Cdeveloper](https://github.com/A-Cdeveloper)
