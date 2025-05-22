@@ -1,19 +1,11 @@
-import { getUserFromRequest } from "@/lib/auth/auth";
+import { requireUser } from "@/lib/auth/requireUser";
 import { getAllUserGuarantees } from "@/lib/invoices/getAllUserGuarantees";
 
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  // check if user is logged in
-  const userId = await getUserFromRequest(req);
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Nemate prava pristupa garancijama" },
-      { status: 401 }
-    );
-  }
-
+export async function GET(request: NextRequest) {
+  const userId = await requireUser(request);
+  if (userId instanceof NextResponse) return userId;
   try {
     const { total, guaranteesProducts } = await getAllUserGuarantees(userId);
     return NextResponse.json(

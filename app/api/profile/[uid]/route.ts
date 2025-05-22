@@ -1,4 +1,4 @@
-import { getUserFromRequest } from "@/lib/auth/auth";
+import { requireUser } from "@/lib/auth/requireUser";
 import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,17 +8,8 @@ export async function DELETE(
 ) {
   const { uid } = await context.params;
 
-  console.log(uid);
-
-  // check if user is logged in
-  const userId = await getUserFromRequest(request);
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Nemate prava pristupa profilu" },
-      { status: 401 }
-    );
-  }
+  const userId = await requireUser(request);
+  if (userId instanceof NextResponse) return userId;
 
   // check if user exist
   if (userId !== uid) {

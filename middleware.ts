@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromRequest } from "./lib/auth/auth";
+import { requireUser } from "./lib/auth/requireUser";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -61,7 +62,9 @@ export async function middleware(request: NextRequest) {
   );
 
   if (isProtected) {
-    const userId = await getUserFromRequest(request);
+    const userId = await requireUser(request);
+    if (userId instanceof NextResponse) return userId;
+
     if (!userId) {
       return NextResponse.json(
         { error: "Nemate prava pristupa. Molimo vas prijavite se." },

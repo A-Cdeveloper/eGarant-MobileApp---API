@@ -1,19 +1,12 @@
-import { getUserFromRequest } from "@/lib/auth/auth";
+import { requireUser } from "@/lib/auth/requireUser";
 import { addUserInvoice } from "@/lib/invoices/addUserInvoice";
 import { extractProductsFromJurnal } from "@/lib/invoices/extractProductsFromJurnal";
 import { getAllUserInvoices } from "@/lib/invoices/getAllUserInvoices";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  // check if user is logged in
-  const userId = await getUserFromRequest(req);
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Nemate prava pristupa računima" },
-      { status: 401 }
-    );
-  }
+export async function GET(request: NextRequest) {
+  const userId = await requireUser(request);
+  if (userId instanceof NextResponse) return userId;
 
   try {
     const { invoices, total } = await getAllUserInvoices(userId);
@@ -24,18 +17,11 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
-  // check if user is logged in
-  const userId = await getUserFromRequest(req);
+export async function POST(request: NextRequest) {
+  const userId = await requireUser(request);
+  if (userId instanceof NextResponse) return userId;
 
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Nemate prava za dodavanje računa" },
-      { status: 401 }
-    );
-  }
-
-  const data = await req.json();
+  const data = await request.json();
   const { invoiceNumber, sdcTime, totalAmount } = data.invoiceResult;
   const { businessName, address, city, taxId } = data.invoiceRequest;
 

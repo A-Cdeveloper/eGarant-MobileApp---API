@@ -1,4 +1,4 @@
-import { getUserFromRequest } from "@/lib/auth/auth";
+import { requireUser } from "@/lib/auth/requireUser";
 import { deleteUserInvoice } from "@/lib/invoices/deleteUserInvoice";
 import { getSingleInvoice } from "@/lib/invoices/getSingleInvoice";
 import { updateProductGPeriod } from "@/lib/invoices/updateProductGPeriod";
@@ -10,15 +10,8 @@ export async function GET(
 ) {
   const { iid } = await context.params;
 
-  // check if user is logged in
-  const userId = await getUserFromRequest(request);
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Nemate prava pristupa ovom računu" },
-      { status: 401 }
-    );
-  }
+  const userId = await requireUser(request);
+  if (userId instanceof NextResponse) return userId;
 
   try {
     const { invoice, productsCount, productsWithWarrantyCount } =
@@ -39,14 +32,8 @@ export async function DELETE(
 ) {
   const { iid } = await context.params;
 
-  // check if user is logged in
-  const userId = await getUserFromRequest(request);
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Nemate prava brisanja ovog računa" },
-      { status: 401 }
-    );
-  }
+  const userId = await requireUser(request);
+  if (userId instanceof NextResponse) return userId;
 
   try {
     await deleteUserInvoice({ uid: userId, iid });
@@ -67,14 +54,8 @@ export async function PATCH(
   const { pid, gperiod } = await request.json();
   const { iid } = await context.params;
 
-  // check if user is logged in
-  const userId = await getUserFromRequest(request);
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Nemate prava pristupa ovom artiklu" },
-      { status: 401 }
-    );
-  }
+  const userId = await requireUser(request);
+  if (userId instanceof NextResponse) return userId;
 
   try {
     await updateProductGPeriod({ uid: userId, iid, pid, gperiod });

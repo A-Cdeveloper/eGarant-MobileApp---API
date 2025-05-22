@@ -1,16 +1,10 @@
-import { getUserFromRequest } from "@/lib/auth/auth";
+import { requireUser } from "@/lib/auth/requireUser";
 import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const userId = await getUserFromRequest(request);
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Nemate prava pristupa profilu" },
-      { status: 401 }
-    );
-  }
+  const userId = await requireUser(request);
+  if (userId instanceof NextResponse) return userId;
 
   try {
     const [user, invoiceCount, productsGaranteeCount] = await Promise.all([
