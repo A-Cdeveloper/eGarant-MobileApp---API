@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { requireUser } from "./lib/auth/requireUser";
-
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const origin = request.headers.get("origin");
@@ -62,9 +60,12 @@ export async function middleware(request: NextRequest) {
   );
 
   if (isProtected) {
-    const userId = await requireUser(request);
+    const authHeader = request.headers.get("authorization");
 
-    if (!userId) {
+    console.log("authHeader", authHeader);
+
+    // ✅ Just check that token is present — don't decode it here!
+    if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json(
         {
           success: false,
