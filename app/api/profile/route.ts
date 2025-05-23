@@ -1,44 +1,63 @@
-import { requireUser } from "@/lib/auth/requireUser";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { User } from "@prisma/client";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  const userId = await requireUser(request);
-  if (userId instanceof NextResponse) return userId;
+type UserProfile = Pick<User, "email" | "fullName" | "phone">;
 
-  try {
-    const [user, invoiceCount, productsGaranteeCount] = await Promise.all([
-      prisma.user.findUnique({
-        where: { uid: userId },
-        select: { email: true, fullName: true, phone: true },
-      }),
-      prisma.invoice.count({
-        where: { uid: userId },
-      }),
-      prisma.product.count({
-        where: {
-          gperiod: {
-            gt: 0,
+type SuccessResponse = {
+  success: true;
+  data: {
+    user: UserProfile | null;
+    invoiceCount: number;
+    productsGaranteeCount: number;
+  };
+};
+
+type ErrorResponse = {
+  success: false;
+  error: {
+    message: string;
+  };
+};
+
+export const GET = withAuth<SuccessResponse | ErrorResponse>(
+  async (request, userId) => {
+    try {
+      const [user, invoiceCount, productsGaranteeCount] = await Promise.all([
+        prisma.user.findUnique({
+          where: { uid: userId },
+          select: { email: true, fullName: true, phone: true },
+        }),
+        prisma.invoice.count({
+          where: { uid: userId },
+        }),
+        prisma.product.count({
+          where: {
+            gperiod: { gt: 0 },
+            invoice: { uid: userId },
           },
-          invoice: {
-            uid: userId,
-          },
-        },
-      }),
-    ]);
+        }),
+      ]);
 
-    return NextResponse.json(
-      {
+      return NextResponse.json({
+        success: true,
         data: {
           user,
           invoiceCount,
           productsGaranteeCount,
         },
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    const errorMessage = error instanceof Error && error.message;
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+      });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Greška na serveru";
+      return NextResponse.json(
+        {
+          success: false,
+          error: { message: errorMessage },
+        },
+        { status: 500 }
+      );
+    }
   }
-}
+);
