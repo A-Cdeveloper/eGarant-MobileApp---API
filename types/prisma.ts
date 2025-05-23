@@ -14,6 +14,11 @@ export type InvoiceWithSeller = Prisma.InvoiceGetPayload<{
         pib: true;
       };
     };
+    _count: {
+      select: {
+        products: true; // just `true` here, no `where`
+      };
+    };
   };
 }>;
 

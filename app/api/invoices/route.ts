@@ -9,7 +9,7 @@ type SuccessGetResponse = {
   success: true;
   data: {
     total: number;
-    invoices: InvoiceWithSeller[];
+    invoices: Omit<InvoiceWithSeller, "_count">[];
   };
 };
 

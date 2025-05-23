@@ -6,7 +6,7 @@ export const getAllUserInvoices = async (
   uid: string
 ): Promise<{
   total: number;
-  invoices: InvoiceWithSeller[];
+  invoices: Omit<InvoiceWithSeller, "_count">[];
 }> => {
   try {
     const invoices = await prisma.invoice.findMany({
@@ -24,6 +24,17 @@ export const getAllUserInvoices = async (
             pib: true,
           },
         },
+        _count: {
+          select: {
+            products: {
+              where: {
+                gperiod: {
+                  gt: 0, // Only count products where warranty period is greater than 0
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: {
         invoice_date: "desc", // optional: newest first
@@ -32,7 +43,10 @@ export const getAllUserInvoices = async (
 
     return {
       total: invoices.length,
-      invoices,
+      invoices: invoices.map((invoice) => ({
+        ...invoice,
+        productsWithWarrantyCount: invoice._count.products,
+      })),
     };
   } catch (error) {
     handlePrismaError(error);
