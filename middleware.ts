@@ -63,17 +63,16 @@ export async function middleware(request: NextRequest) {
 
   if (isProtected) {
     const userId = await requireUser(request);
-    if (userId instanceof NextResponse) return userId;
 
     if (!userId) {
       return NextResponse.json(
-        { error: "Nemate prava pristupa. Molimo vas prijavite se." },
+        {
+          success: false,
+          error: { message: "Nemate prava pristupa. Prijavite se ponovo" },
+        },
         { status: 401 }
       );
     }
-
-    // Optional: forward userId to API route
-    request.headers.set("x-user-id", userId);
   }
 
   return response;
