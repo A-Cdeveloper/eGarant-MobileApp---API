@@ -13,7 +13,7 @@ export function withAuth<T>(
           {
             success: false,
             error: {
-              message: "Nemate prava pristupa99999999. Prijavite se ponovo",
+              message: "Nemate pravo pristupa. Prijavite se ponovo",
             },
           } as T,
           { status: 401 }

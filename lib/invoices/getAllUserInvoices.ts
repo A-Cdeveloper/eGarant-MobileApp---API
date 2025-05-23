@@ -24,11 +24,6 @@ export const getAllUserInvoices = async (
             pib: true,
           },
         },
-        user: {
-          select: {
-            uid: true,
-          },
-        },
       },
       orderBy: {
         invoice_date: "desc", // optional: newest first
