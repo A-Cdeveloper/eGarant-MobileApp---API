@@ -21,6 +21,7 @@ export const getSingleInvoice = async ({
         invoice_number: true,
         invoice_date: true,
         invoice_amount: true,
+        jurnal: true,
         uid: true,
         seller: {
           select: {

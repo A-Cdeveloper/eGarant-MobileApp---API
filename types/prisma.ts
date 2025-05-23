@@ -23,6 +23,7 @@ export type InvoiceWithSelerAndProducts = Prisma.InvoiceGetPayload<{
     invoice_number: true;
     invoice_date: true;
     invoice_amount: true;
+    jurnal: true;
     products: {
       select: {
         pid: true;
