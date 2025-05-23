@@ -25,7 +25,7 @@ export async function requireUser(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     return NextResponse.json(
-      { error: "Nevažeći ili istekao token" },
+      { error: "Nevažeći ili istekao token.Molimo prijavite se ponovo" },
       { status: 401 }
     );
   }

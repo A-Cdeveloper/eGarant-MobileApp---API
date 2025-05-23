@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserFromRequest } from "./lib/auth/auth";
+
 import { requireUser } from "./lib/auth/requireUser";
 
 export async function middleware(request: NextRequest) {
