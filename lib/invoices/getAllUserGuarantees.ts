@@ -23,6 +23,7 @@ export const getAllUserGuarantees = async (
         price: true,
         invoice: {
           select: {
+            iid: true,
             invoice_number: true,
             invoice_date: true,
 

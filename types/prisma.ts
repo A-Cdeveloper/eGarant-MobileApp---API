@@ -57,6 +57,7 @@ export type ProductWithInvoice = Prisma.ProductGetPayload<{
     price: true;
     invoice: {
       select: {
+        iid: true;
         invoice_number: true;
         invoice_date: true;
         seller: {
