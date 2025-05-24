@@ -9,9 +9,10 @@ export const getSingleInvoice = async ({
   uid: string;
   iid: string;
 }): Promise<{
-  invoice: InvoiceWithSelerAndProducts;
-  productsCount: number;
-  productsWithWarrantyCount: number;
+  invoice: InvoiceWithSelerAndProducts & {
+    productsCount: number;
+    productsWithWarrantyCount: number;
+  };
 }> => {
   try {
     const invoice = await prisma.invoice.findFirst({
@@ -59,9 +60,11 @@ export const getSingleInvoice = async ({
     );
 
     return {
-      invoice,
-      productsCount,
-      productsWithWarrantyCount,
+      invoice: {
+        productsCount,
+        productsWithWarrantyCount,
+        ...invoice,
+      },
     };
   } catch (error) {
     handlePrismaError(error);
