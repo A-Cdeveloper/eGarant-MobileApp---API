@@ -27,7 +27,7 @@ export const GET = withAuth<SuccessResponse | ErrorResponse>(
       const [user, invoiceCount, productsGaranteeCount] = await Promise.all([
         prisma.user.findUnique({
           where: { uid: userId },
-          select: { email: true, fullName: true, phone: true },
+          select: { email: true, fullName: true, phone: true, updatedAt: true },
         }),
         prisma.invoice.count({
           where: { uid: userId },
