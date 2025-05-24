@@ -7,9 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 type SuccessGetResponse = {
   success: true;
-  data: InvoiceWithSelerAndProducts | null;
-  productsCount: number;
-  productsWithWarrantyCount: number;
+  data: InvoiceWithSelerAndProducts;
 };
 
 type SuccessDeleteResponse = {
@@ -36,15 +34,12 @@ async function handleGet(
   iid: string
 ): Promise<NextResponse<SuccessGetResponse | ErrorResponse>> {
   try {
-    const { invoice, productsCount, productsWithWarrantyCount } =
-      await getSingleInvoice({ uid: userId, iid });
+    const { invoice } = await getSingleInvoice({ uid: userId, iid });
 
     return NextResponse.json(
       {
         success: true,
         data: invoice,
-        productsCount,
-        productsWithWarrantyCount,
       },
       { status: 200 }
     );
