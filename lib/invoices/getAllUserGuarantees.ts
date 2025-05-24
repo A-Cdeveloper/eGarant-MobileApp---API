@@ -17,6 +17,7 @@ export const getAllUserGuarantees = async (
         },
       },
       select: {
+        pid: true,
         name: true,
         quantity: true,
         gperiod: true,
